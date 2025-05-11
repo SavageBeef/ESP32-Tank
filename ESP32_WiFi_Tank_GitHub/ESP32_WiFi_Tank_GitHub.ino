@@ -25,7 +25,8 @@
   Please be sure to select the right ESP32 module
   in the Tools -> Board menu!
 
-  Change WiFi ssid, pass, and Blynk auth token to run :)
+  Change WiFi ssid (line 62), pass (line 63), and Blynk auth token (line 58) to run :)
+  If you're using custom server, also change IPAddress (line 135). 
   Feel free to apply it to any other example. It's simple!
  *************************************************************/
 
@@ -62,14 +63,14 @@ char ssid[] = "";
 char pass[] = "";
 
 // Motor 1 (Left)
-#define motorL_Negative 22 //motorL_Negative 23
-#define motorL_Positive 23 //motorL_Positive 22 
-#define motorL_EN 21    //motorL_EN
+#define motorL_Negative 22
+#define motorL_Positive 23 
+#define motorL_EN 21    
 
 // Motor 2 (Right)
-#define motorR_Negative 13 //motorR_Negative 12
-#define motorR_Positive 12 //motorR_Positive 13
-#define motorR_EN 32    //motorR_EN
+#define motorR_Negative 27
+#define motorR_Positive 26 
+#define motorR_EN 25
 
 // Analog speeds from 0 (lowest) - 1023 (highest).
 // 3 speeds used -- 0 (noSpeed), 350 (minSpeed), 850 (maxSpeed).
@@ -131,7 +132,6 @@ void setup()
   WebSerial.msgCallback(recvMsg);
   server.begin();
 
-  // IPAddress of your server.
   Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,5), 8080);
 
   pinMode(2, OUTPUT);
@@ -164,8 +164,8 @@ void setup()
   digitalWrite(2,LOW); 
 
 
-  // Set a function to be called every 50ms.
-  timer.setInterval(50L, uSonicButtonCheck); 
+  // Set a function to be called every 500ms.
+  timer.setInterval(500L, uSonicButtonCheck); 
 }
 
 void loop()
@@ -365,7 +365,7 @@ BLYNK_WRITE(V4)
   }
   else{
     ledcWrite(lights, pinData);
-    ledIndicator.setValue((((pinData/maxLimiter)*100)/100)*255); // Convert x bit io 8 bit for WidgetLED.
+    ledIndicator.setValue((float(pinData) / maxLimiter) * 255); // Convert x bit io 8 bit for WidgetLED.
   }
  
   // Debug
