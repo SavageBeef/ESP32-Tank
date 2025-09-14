@@ -108,6 +108,17 @@ WidgetLED ledIndicator(V11);
 // Control ultrasonic NPN1 Transistor.
 #define currentToUSonic 5
 
+// Pin for battery voltage.
+#define batteryVoltagePin 35
+void readBatteryVoltage();
+
+// Battery Parameters.
+const float maxBatteryVoltage = 16.8;   // Max voltage for a Li-ion cell
+const float minBatteryVoltage = 10.0;   // Min voltage for a Li-ion cell
+// Voltage Divider Parameters.
+const float R1 = 40000.0;  // Resistor R1 in voltage divider (40kΩ)
+const float R2 = 10000.0;  // Resistor R2 in voltage divider (10kΩ)
+
 // Function not needed.
 // Arduino like analogWrite.
 // Value has to be between 0 and valueMax.
@@ -132,6 +143,7 @@ void setup()
   WebSerial.msgCallback(recvMsg);
   server.begin();
 
+  // IP and Port of Blynk Server.
   Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,5), 8080);
 
   pinMode(2, OUTPUT);
@@ -146,6 +158,8 @@ void setup()
   pinMode(lights, OUTPUT);
 
   pinMode(currentToUSonic, OUTPUT);
+
+  pinMode(batteryVoltagePin, INPUT);
   
   
   // Attach PWM functionalitites via ledc to the GPIO to be controlled.
@@ -163,9 +177,25 @@ void setup()
   delay(1000);
   digitalWrite(2,LOW); 
 
+  // Blink Lights.
+  ledcWrite(lights, 0);
+  delay(500);
+  ledcWrite(lights, 511);
+  delay(500);
+  ledcWrite(lights, 0);
+  delay(500);
+  ledcWrite(lights, 766);
+  delay(500);
+  ledcWrite(lights, 0);
+  delay(500);
+  ledcWrite(lights, 1023);
+
 
   // Set a function to be called every 500ms.
   timer.setInterval(500L, uSonicButtonCheck); 
+
+  // Set a function to be called every 1s.
+  timer.setInterval(1000L, readBatteryVoltage);
 }
 
 void loop()
@@ -179,7 +209,7 @@ BLYNK_CONNECTED() {
     Blynk.syncAll(); // Sync blynk client app with blynk server to recall last values.
 }
 
-// Joystick control.
+// Joystick control
 BLYNK_WRITE(V5)
 {
   int x = param[0].asInt();
@@ -309,7 +339,7 @@ BLYNK_WRITE(V6)
   Serial.println();*/
 }
 
-// Ultrasonic Sensor button.
+// Ultrasonic Sensor button
 BLYNK_WRITE(V3) 
 {
   uSonicState = param.asInt(); 
@@ -346,7 +376,7 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
   else {currentToUSonic == LOW;} // Cut power to NPPN Transistor.
 }
 
-// Led lights slider.
+// Led lights slider
 BLYNK_WRITE(V4) 
 {
   int pinData = param.asInt(); 
@@ -373,6 +403,28 @@ BLYNK_WRITE(V4)
   Serial.print("ledValue = ");
   Serial.println(ledValue);*/
   
+}
+
+// Battery Voltage
+void readBatteryVoltage() {
+  float sum = 0;
+  const int numSamples = 10;
+
+  for (int i = 0; i < numSamples; i++) {
+    sum += analogReadMilliVolts(batteryVoltagePin);  // Read in millivolts
+    delay(5);
+  }
+
+  float averageMilliVolts = sum / numSamples;
+  float voltage = (averageMilliVolts / 1000.0);  // Convert mV to V
+  voltage = voltage * (R1 + R2) / R2;  // Adjust for voltage divider
+  // Write to Value Display
+  Blynk.virtualWrite(V14, voltage);
+
+  //Battery Percentage
+  float percentage = (voltage - minBatteryVoltage) / (maxBatteryVoltage - minBatteryVoltage) * 100;
+  // Write to Gauge
+  Blynk.virtualWrite(V15, constrain(percentage, 0, 100));
 }
 
 // Arduino OTA
