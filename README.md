@@ -56,5 +56,12 @@ Q2 - S8050 NPN Transistor
 
 hc-sr1 - HC-SR04 Ultrasonic Sensor
 
+4 10k Ohms Resistors - For voltage divider (Not in the Schematic Diagram)
 
 
+## Blynk App
+#### App control and Virtual Pins
+![Virtual Pins](Blynk%20App%20Virtual%20Pins.jpg)
+
+#### Control running
+![Control running](Blynk%20App%20Running.jpg)
