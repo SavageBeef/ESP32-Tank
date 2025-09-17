@@ -50,17 +50,20 @@
 #include <ESPAsyncWebServer.h>
 #include <WebSerial.h>
 
+// Secrets
+#include "ESP32_secrets.h"
+
 AsyncWebServer server(80);
 int LED = 2;
 
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
-char auth[] = "";
+char auth[] = Secret_AUTH;
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = ""; 
-char pass[] = "";
+char ssid[] = Secret_SSID; 
+char pass[] = Secret_PASS;
 
 // Motor 1 (Left)
 #define motorL_Negative 22
@@ -113,8 +116,8 @@ WidgetLED ledIndicator(V11);
 void readBatteryVoltage();
 
 // Battery Parameters.
-const float maxBatteryVoltage = 16.8;   // Max voltage for a Li-ion cell
-const float minBatteryVoltage = 10.0;   // Min voltage for a Li-ion cell
+const float maxBatteryVoltage = 12.3;  // Max voltage for a 18650 3.7v Li-ion cell. 4.2V/cell - 0.1V.
+const float minBatteryVoltage = 8.4;  // Min voltage for a 18650 3.7 Li-ion cell. Tested Cut-off voltage 2.8V/cell.
 // Voltage Divider Parameters.
 const float R1 = 40000.0;  // Resistor R1 in voltage divider (40kΩ)
 const float R2 = 10000.0;  // Resistor R2 in voltage divider (10kΩ)
@@ -144,7 +147,7 @@ void setup()
   server.begin();
 
   // IP and Port of Blynk Server.
-  Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,5), 8080);
+  Blynk.begin(auth, ssid, pass, IPAddress(Secret_IP), 8080);
 
   pinMode(2, OUTPUT);
   
