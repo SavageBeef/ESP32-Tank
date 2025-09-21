@@ -138,7 +138,7 @@ void setup()
   // Debug console
   Serial.begin(115200);
   
-  // Call OTA_Setup function.
+  // Call OTA_Setup function which provides Arduino OTA.
   OTA_Setup();
 
   // WebSerial is accessible at "<IP Address>/webserial" in browser.
@@ -147,7 +147,7 @@ void setup()
   server.begin();
 
   // IP and Port of Blynk Server.
-  Blynk.begin(auth, ssid, pass, IPAddress(Secret_IP), 8080);
+  Blynk.config(auth, IPAddress(Secret_IP), 8080);
 
   pinMode(2, OUTPUT);
   
@@ -170,29 +170,16 @@ void setup()
   ledcAttach(motorR_EN, freq, resolution);
   ledcAttach(lights, 1000, resolution);
 
-
-  // Blink onboard blue led 2x to signal successful connection to wifi and local blynk server.
-  digitalWrite(2,HIGH); 
-  delay(1000);
-  digitalWrite(2,LOW);
-  delay(1000);
-  digitalWrite(2,HIGH); 
-  delay(1000);
-  digitalWrite(2,LOW); 
-
   // Blink Lights.
   ledcWrite(lights, 0);
-  delay(500);
+  delay(250);
   ledcWrite(lights, 511);
-  delay(500);
+  delay(250);
   ledcWrite(lights, 0);
-  delay(500);
+  delay(250);
   ledcWrite(lights, 766);
-  delay(500);
+  delay(250);
   ledcWrite(lights, 0);
-  delay(500);
-  ledcWrite(lights, 1023);
-
 
   // Set a function to be called every 500ms.
   timer.setInterval(500L, uSonicButtonCheck); 
@@ -203,9 +190,26 @@ void setup()
 
 void loop()
 {
-  Blynk.run(); // Runs Blynk.
-  ArduinoOTA.handle(); // Listen for code upload OTA.
-  timer.run(); // Initiates BlynkTimer.
+  ArduinoOTA.handle(); // Listen for Arduino code upload OTA.
+
+  // Check if WiFi is connected before attempting to connect to Blynk
+  if (WiFi.status() == WL_CONNECTED) {
+    // If not connected to Blynk, try to connect
+    if (!Blynk.connected()) {
+      // Blink onboard led on attempts to connect to blynk server.
+      digitalWrite(2,HIGH); 
+      delay(1000);
+      digitalWrite(2,LOW);
+      delay(1000);
+      Serial.println("Attempting to connect to Blynk server...");
+      Blynk.connect(5000); // 5 sec timeout, loop continues so Arduino OTA doesn't timeout while waiting for the hardwaare to respond for code upload. 
+    }
+    // If connected, run the Blynk routine
+    else {
+      Blynk.run();
+      timer.run(); // Initiates BlynkTimer.
+    }
+  }
 }
 
 BLYNK_CONNECTED() {
@@ -445,7 +449,7 @@ void OTA_Setup(){
   // ArduinoOTA.setPort(3232);
 
   // Hostname defaults to esp3232-[MAC]
-  // ArduinoOTA.setHostname("myesp32");
+  ArduinoOTA.setHostname("Tank-NodeMCU-32S");
 
   // No authentication by default
   // ArduinoOTA.setPassword("admin");
