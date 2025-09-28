@@ -1,67 +1,90 @@
-# ESP32-Tank
+# ESP32-Tank: Wireless Network Controlled DIY Tank
 
-## Overview
-This project utilizes the ESP32 as a Microcontroller that is programmed to enable a DIY Tank to be controlled over a wireless network using Arduino IDE and Blynk Library.
+## 🚀 Overview
 
-#### Block Diagram
+This project details a **DIY Tank** controlled over a wireless network using an **ESP32** microcontroller. The system is programmed using **Arduino IDE** and utilizes the **Blynk Library** for mobile control.
+
+---
+
+## 🏗️ System Diagrams
+
+### Block Diagram
 
 ![Block Diagram](Block%20Diagram.png)
 
-#### Schematic Diagram
+### Schematic Diagram
 
 ![Schematic Diagram](Tank%20Schematic_schem.png)
 
+---
 
-## IDE
-Arduino IDE - 2.3.6
+## 💻 Development Environment
+
+### Arduino IDE
+
+* **IDE Version:** Arduino IDE - 2.3.6
 
 ### Boards Manager
-esp32 by Espressif Systems - 3.2.0
+
+* `esp32` by Espressif Systems - 3.2.0
 
 ### Libraries
-Blynk by Volodymyr Shymanskyy - 1.1.0
 
-ESP Async WebServer by ESP32Async - 3.7.6
+| Library Name | Author | Version |
+| :--- | :--- | :--- |
+| **Blynk** | Volodymyr Shymanskyy | 1.1.0 |
+| **ESP Async WebServer** | ESP32Async | 3.7.6 |
+| **Async TCP** | ESP32Async | 3.3.8 |
 
-Async TCP by ESP32Async - 3.3.8 
+### 🛠️ OTA Update Fix
 
-### Fix for Arduino OTA update with Arduino IDE 2
-https://forum.arduino.cc/t/network-ports-missing/1355667/4
+If you encounter issues with Arduino OTA updates in Arduino IDE 2, refer to this fix:
+[https://forum.arduino.cc/t/network-ports-missing/1355667/4](https://forum.arduino.cc/t/network-ports-missing/1355667/4)
 
-## Blynk Local Server
-https://github.com/Peterkn2001/blynk-server
+---
 
-Blynk mobile app - 2.27.34
+## 📱 Blynk Setup
 
-## Components List
-Chassis - DIY T300 NodeMCU Aluminum Alloy Metal Wall-E Tank Track Caterpillar Chassis Smart Robot Kit 
+### Local Server
 
-IC2 - KeeYees ESP-WROOM-32 (NodeMCU-32S) (38 PIN Narrow version)
+The project utilizes a local Blynk server:
+[https://github.com/Peterkn2001/blynk-server](https://github.com/Peterkn2001/blynk-server)
 
-IC1 - L293D Motor Driver IC
+### Mobile App
 
-M1 & M2 - ComXim 25GA370 High Torque DC Brush Motor 25mm All Metal Gear (12V, 100R)
+* **Blynk mobile app version:** 2.27.34
 
-S1 & S2 - Gikfun MTS102 2 Position 3 Pins Mini Toggle Switch for Arduino
+### App Interface
 
-U1 & U2 - STMicroelectronics L7805CV TO-220 Voltage Regulator
+#### Virtual Pins & Controls
 
-C1 & C2 - 10 uf Electrolytic Capacitor
+The Blynk app interface shows the configuration of virtual pins used for control.
 
-R1 & R2 - 220 Ohms Resistor
-
-Q1 - PN 2222A NPN Transistor
-
-Q2 - S8050 NPN Transistor
-
-hc-sr1 - HC-SR04 Ultrasonic Sensor
-
-4 10k Ohms Resistors - For voltage divider (Not in the Schematic Diagram)
-
-
-## Blynk App
-#### App control and Virtual Pins
 ![Virtual Pins](Blynk%20App%20Virtual%20Pins.jpg)
 
-#### Control running
+#### Control in Action
+
+This image displays the app while the tank is being controlled.
+
 ![Control running](Blynk%20App%20Running.jpg)
+
+---
+
+## 📋 Components List
+
+| Component Reference | Description |
+| :--- | :--- |
+| **Chassis** | DIY T300 NodeMCU Aluminum Alloy Metal Wall-E Tank Track Caterpillar Chassis Smart Robot Kit |
+| **IC2** (Microcontroller) | KeeYees ESP-WROOM-32 (NodeMCU-32S) (38 PIN Narrow version) |
+| **IC1** (Motor Driver) | L293D Motor Driver IC |
+| **M1 & M2** (Motors) | ComXim 25GA370 High Torque DC Brush Motor 25mm All Metal Gear (12V, 100R) |
+| **S1 & S2** (Switches) | Gikfun MTS102 2 Position 3 Pins Mini Toggle Switch for Arduino |
+| **U1 & U2** (Regulators) | STMicroelectronics L7805CV TO-220 Voltage Regulator |
+| **C1 & C2** (Capacitors) | 10 $\mu$f Electrolytic Capacitor |
+| **R1 & R2** (Resistors) | 220 Ohms Resistor |
+| **Q1** (Transistor) | PN 2222A NPN Transistor |
+| **Q2** (Transistor) | S8050 NPN Transistor |
+| **hc-sr1** (Sensor) | HC-SR04 Ultrasonic Sensor |
+| **Misc.** | 4 $\times$ 10k Ohms Resistors (For voltage divider - *Note: Not shown in the Schematic Diagram*) |
+
+***
