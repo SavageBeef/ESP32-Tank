@@ -116,8 +116,8 @@ WidgetLED ledIndicator(V11);
 void readBatteryVoltage();
 
 // Battery Parameters.
-const float maxBatteryVoltage = 12.3;  // Max voltage for a 18650 3.7v Li-ion cell. 4.2V/cell - 0.1V.
-const float minBatteryVoltage = 8.4;  // Min voltage for a 18650 3.7 Li-ion cell. Tested Cut-off voltage 2.8V/cell.
+const float maxBatteryVoltage = 16.4;  // Max voltage for a 18650 3.7v Li-ion cell. 4.2V/cell - 0.1V.
+const float minBatteryVoltage = 11.2;  // Min voltage for a 18650 3.7 Li-ion cell. Tested Cut-off voltage 2.8V/cell.
 // Voltage Divider Parameters.
 const float R1 = 40000.0;  // Resistor R1 in voltage divider (40kΩ)
 const float R2 = 10000.0;  // Resistor R2 in voltage divider (10kΩ)
@@ -181,8 +181,8 @@ void setup()
   delay(250);
   ledcWrite(lights, 0);
 
-  // Set a function to be called every 500ms.
-  timer.setInterval(500L, uSonicButtonCheck); 
+  // Set a function to be called every 50ms.
+  timer.setInterval(50L, uSonicButtonCheck); 
 
   // Set a function to be called every 1s.
   timer.setInterval(1000L, readBatteryVoltage);
@@ -360,6 +360,7 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
     currentToUSonic == HIGH; // Turns on NPN Transistor to supply power to the sensor.
    
     distance = sr04.Distance();
+    Blynk.virtualWrite(V7, distance); // Display distance in app.
 
     // Debug
     /*Serial.print("Distance = ");
@@ -373,14 +374,19 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
     if (distance <= 40) // Prevent tank from crashing into objects.
     {
       do {
-         digitalWrite(motorL_Positive,LOW); 
-         digitalWrite(motorL_Negative,LOW);
-         digitalWrite(motorR_Positive,LOW);  
-         digitalWrite(motorR_Negative,LOW); 
+        digitalWrite(motorL_Positive,LOW); 
+        digitalWrite(motorL_Negative,LOW);
+        digitalWrite(motorR_Positive,LOW);  
+        digitalWrite(motorR_Negative,LOW);
+        Blynk.virtualWrite(V5, 512, 512); // Force joystick to neutral position in app. 
       } while (currentToUSonic == HIGH); // This keeps the tank/motors at halt until the timer runs the function again and ultrasonic button is off.
     }   
   }
-  else {currentToUSonic == LOW;} // Cut power to NPPN Transistor.
+  else {
+    currentToUSonic == LOW; // Cut power to NPPN Transistor.
+    Blynk.virtualWrite(V7, "--"); 
+  
+  } 
 }
 
 // Led lights slider
