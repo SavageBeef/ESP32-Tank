@@ -107,3 +107,24 @@ This configuration provides:
 | **Q2** (Transistor) | S8050 NPN Transistor |
 | **hc-sr1** (Sensor) | HC-SR04 Ultrasonic Sensor |
 | **Misc.** | 4 $\times$ 10k Ohms Resistors (For voltage divider - *Note: Not shown in the Schematic Diagram*) |
+
+---
+
+## 🚧 Future Development / To-Do List
+
+This project is a work in progress. The following features and optimizations are ideas for future updates:
+
+### ⚙️ Tank Control Logic
+
+* [ ] **Ultrasonic Sensor Optimization:** Improve the HC-SR04 sensor logic to ensure the tank remains stopped after an obstacle is detected, even if the joystick remains in the forward position.
+    * The tank should only resume movement when the sensor is turned off, acting as a manual reset after an obstacle stop.
+
+### 📱 Blynk App Integration
+
+* [x] **Battery Life:** Integrate the remaining battery life/voltage reading into the Blynk mobile application.
+    * This allows the user to monitor the power source level in real-time.
+* [x] **Distance Feedback:** Integrate the distance measurement from the HC-SR04 ultrasonic sensor into the Blynk mobile application.
+    * This will allow users to monitor the current distance to obstacles in real-time.
+* [ ] **Custom Sensor Limit:** Add a **Numeric Input widget** in the Blynk app so the user can set a **custom distance limit** (threshold) for the ultrasonic sensor.
+    * This will allow the user to dynamically adjust how close the tank gets to an obstacle before stopping.
+
