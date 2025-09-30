@@ -121,9 +121,9 @@ This project is a work in progress. The following features and optimizations are
 
 ### 📱 Blynk App Integration
 
-* [x] **Battery Life:** Integrate the remaining battery life/voltage reading into the Blynk mobile application.
+* [x] **Battery Life:** Integrate the remaining battery life/voltage reading into the Blynk mobile application. (Completed in commit: '4fa2a0d')
     * This allows the user to monitor the power source level in real-time.
-* [x] **Distance Feedback:** Integrate the distance measurement from the HC-SR04 ultrasonic sensor into the Blynk mobile application.
+* [x] **Distance Feedback:** Integrate the distance measurement from the HC-SR04 ultrasonic sensor into the Blynk mobile application. (Completed in commit: '1a86019')
     * This will allow users to monitor the current distance to obstacles in real-time.
 * [ ] **Custom Sensor Limit:** Add a **Numeric Input widget** in the Blynk app so the user can set a **custom distance limit** (threshold) for the ultrasonic sensor.
     * This will allow the user to dynamically adjust how close the tank gets to an obstacle before stopping.
