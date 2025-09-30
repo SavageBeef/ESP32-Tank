@@ -121,10 +121,12 @@ This project is a work in progress. The following features and optimizations are
 
 ### 📱 Blynk App Integration
 
-* [x] **Battery Life:** Integrate the remaining battery life/voltage reading into the Blynk mobile application. (Completed in commit: '4fa2a0d')
+* [x] **Battery Life:** Integrate the remaining battery life/voltage reading into the Blynk mobile application. 
     * This allows the user to monitor the power source level in real-time.
-* [x] **Distance Feedback:** Integrate the distance measurement from the HC-SR04 ultrasonic sensor into the Blynk mobile application. (Completed in commit: '1a86019')
+    * [`4fa2a0d`](https://github.com/SavageBeef/ESP32-Tank/commit/4fa2a0db8150598015da4d4c1dc8b0fdf28ded42)
+* [x] **Distance Feedback:** Integrate the distance measurement from the HC-SR04 ultrasonic sensor into the Blynk mobile application. 
     * This will allow users to monitor the current distance to obstacles in real-time.
+    * [`1a86019`](https://github.com/SavageBeef/ESP32-Tank/commit/1a86019a34868218a9e55ddc37525fbe77eed8e1)
 * [ ] **Custom Sensor Limit:** Add a **Numeric Input widget** in the Blynk app so the user can set a **custom distance limit** (threshold) for the ultrasonic sensor.
     * This will allow the user to dynamically adjust how close the tank gets to an obstacle before stopping.
 
