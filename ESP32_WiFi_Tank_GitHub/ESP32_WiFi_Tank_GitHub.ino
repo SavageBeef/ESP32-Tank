@@ -117,14 +117,13 @@ WidgetLED ledIndicator(V11);
 void readBatteryVoltage();
 
 // Battery Parameters.
-const float maxBatteryVoltage = 16.8;  // Max voltage for a 18650 3.7v Li-ion cell. 4.2V/cell.
+const float maxBatteryVoltage = 16.68;  // Max voltage for a 18650 3.7v Li-ion cell. 4.2V/cell. 4.17V/cell measured.
 const float minBatteryVoltage = 12;  // Min voltage for a 18650 3.7 Li-ion cell. 3V/cell.
 // Voltage Divider Parameters.
-const float R1 = 39870.0;  // Resistor R1 in voltage divider (40kΩ), multimeter measured value provided.
-const float R2 = 9960.0;  // Resistor R2 in voltage divider (10kΩ), multimeter measured value provided.
-
+const float R1 = 41860.0;  // Resistor R1 in voltage divider (42kΩ), multimeter measured value provided.
+const float R2 = 9989.0;  // Resistor R2 in voltage divider (10kΩ), multimeter measured value provided.
 // Factor to correct for ADC inaccuracies.
-const float calibrationFactor = 1.052; // = Voltage reading from multimeter / Voltage after voltage divider.
+const float calibrationFactor = 1.054; // = Voltage reading from multimeter / Voltage after voltage divider.
 
 // Function not needed.
 // Arduino like analogWrite.
@@ -454,8 +453,14 @@ void readBatteryVoltage() {
 
   float averageMilliVolts = sum / numSamples;
   float voltage = (averageMilliVolts / 1000.0);  // Convert mV to V
+  WebSerial.print("V = ");
+  WebSerial.println(voltage);
   voltage = voltage * (R1 + R2) / R2;  // Adjust for voltage divider
+  WebSerial.print("V-divider = ");
+  WebSerial.println(voltage);
   voltage = voltage * calibrationFactor; // Correct differences between multimeter reading and voltage divider.
+  WebSerial.print("V-califactor = ");
+  WebSerial.println(voltage);
   // Write to Value Display
   Blynk.virtualWrite(V14, voltage);
 
