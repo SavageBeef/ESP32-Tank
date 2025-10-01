@@ -103,6 +103,7 @@ int distance;
 BlynkTimer timer;
 void uSonicButtonCheck();
 int uSonicState;
+bool isHaltedByUSonic = false;
 
 // Lights.
 #define lights 16 // Signal to NPN2 Transistor.
@@ -224,6 +225,18 @@ BLYNK_WRITE(V5)
 {
   int x = param[0].asInt();
   int y = param[1].asInt();
+
+  // Primary Check: Halt Override
+  if (isHaltedByUSonic) {
+    // Override user input and ensure motors are OFF
+    digitalWrite(motorL_Positive,LOW); 
+    digitalWrite(motorL_Negative,LOW);
+    digitalWrite(motorR_Positive,LOW);  
+    digitalWrite(motorR_Negative,LOW);
+    // Exit the function, ignoring the joystick values (x, y)
+    return; 
+  }
+
   // Call moveControl function.
   moveControl(x,y); 
   
@@ -328,11 +341,11 @@ BLYNK_WRITE(V6)
   int maxLimiter = 1023;
 
   if (pinData < minLimiter){ // Min val limiter
-    maxSpeed == minLimiter;
+    maxSpeed = minLimiter;
     Blynk.virtualWrite(V6, minLimiter);
   }
   else if (pinData > maxLimiter){ // Max val limiter
-    maxSpeed == maxLimiter;
+    maxSpeed = maxLimiter;
     Blynk.virtualWrite(V6, maxLimiter);
   }
   else{
@@ -376,19 +389,27 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
     
     if (distance <= 40) // Prevent tank from crashing into objects.
     {
-      do {
-        digitalWrite(motorL_Positive,LOW); 
-        digitalWrite(motorL_Negative,LOW);
-        digitalWrite(motorR_Positive,LOW);  
-        digitalWrite(motorR_Negative,LOW);
-        Blynk.virtualWrite(V5, 512, 512); // Force joystick to neutral position in app. 
-      } while (currentToUSonic == HIGH); // This keeps the tank/motors at halt until the timer runs the function again and ultrasonic button is off.
-    }   
+      // Set the flag to halt Tank
+      isHaltedByUSonic = true; 
+      
+      // Stop the motors immediately
+      digitalWrite(motorL_Positive,LOW); 
+      digitalWrite(motorL_Negative,LOW);
+      digitalWrite(motorR_Positive,LOW);  
+      digitalWrite(motorR_Negative,LOW);
+      
+      // Force joystick to neutral position for visual feedback
+      Blynk.virtualWrite(V5, 512, 512); 
+    } 
+    else {
+      // Clear the flag if distance is clear (and sensor is ON)
+      isHaltedByUSonic = false;
+    }     
   }
   else {
     currentToUSonic == LOW; // Cut power to NPPN Transistor.
     Blynk.virtualWrite(V7, "--"); 
-  
+    isHaltedByUSonic = false; // Always clear the flag when the sensor is turned OFF
   } 
 }
 
