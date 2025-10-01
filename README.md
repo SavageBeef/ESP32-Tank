@@ -118,9 +118,9 @@ This project is a work in progress. The following features and optimizations are
 
 ### ⚙️ Tank Control Logic
 
-* [ ] **Ultrasonic Sensor Optimization:** Improve the HC-SR04 sensor logic to ensure the tank remains stopped after an obstacle is detected, even if the joystick remains in the forward position.
+* [x] **Ultrasonic Sensor Optimization:** Improve the HC-SR04 sensor logic to ensure the tank remains stopped after an obstacle is detected, even if the joystick remains in the forward position.
     * The tank should only resume movement when the sensor is turned off, acting as a manual reset after an obstacle stop.
-
+    * [`0412ced`](https://github.com/SavageBeef/ESP32-Tank/commit/0412ced1019b2e85aa10e8bf287e56d3dd1e1c23)
 ### 📱 Blynk App Integration
 
 * [x] **Battery Life:** Integrate the remaining battery life/voltage reading into the Blynk mobile application. 
