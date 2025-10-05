@@ -123,7 +123,7 @@ const float minBatteryVoltage = 12;  // Min voltage for a 18650 3.7 Li-ion cell.
 const float R1 = 41860.0;  // Resistor R1 in voltage divider (42kΩ), multimeter measured value provided.
 const float R2 = 9989.0;  // Resistor R2 in voltage divider (10kΩ), multimeter measured value provided.
 // Factor to correct for ADC inaccuracies.
-const float calibrationFactor = 1.054; // = Voltage reading from multimeter / Voltage after voltage divider.
+const float calibrationFactor = 1.025; // = Voltage reading from multimeter / Voltage after voltage divider.
 
 // Function not needed.
 // Arduino like analogWrite.
@@ -444,7 +444,7 @@ BLYNK_WRITE(V4)
 // Battery Voltage
 void readBatteryVoltage() {
   float sum = 0;
-  const int numSamples = 10;
+  const int numSamples = 64;
 
   for (int i = 0; i < numSamples; i++) {
     sum += analogReadMilliVolts(batteryVoltagePin);  // Read in millivolts
