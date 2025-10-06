@@ -104,6 +104,7 @@ BlynkTimer timer;
 void uSonicButtonCheck();
 int uSonicState;
 bool isHaltedByUSonic = false;
+int ultrasonicLimit = 40; // Default value in cm
 
 // Lights.
 #define lights 16 // Signal to NPN2 Transistor.
@@ -189,6 +190,9 @@ void setup()
 
   // Set a function to be called every 1s.
   timer.setInterval(1000L, readBatteryVoltage);
+
+  // Set default value for ultrasonic limit in app.
+  Blynk.virtualWrite(V8, ultrasonicLimit); 
 }
 
 void loop()
@@ -386,7 +390,7 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
     //WebSerial.print(distance);
     //WebSerial.println("cm");
     
-    if (distance <= 40) // Prevent tank from crashing into objects.
+    if (distance <= ultrasonicLimit) // Prevent tank from crashing into objects.
     {
       // Set the flag to halt Tank
       isHaltedByUSonic = true; 
@@ -410,6 +414,21 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
     Blynk.virtualWrite(V7, "--"); 
     isHaltedByUSonic = false; // Always clear the flag when the sensor is turned OFF
   } 
+}
+
+// Numeric Input to set limit
+BLYNK_WRITE(V8) {
+  ultrasonicLimit = param.asInt();
+  int minLimiter = 20;
+  int maxLimiter = 200;   
+  if (ultrasonicLimit < minLimiter) {
+    ultrasonicLimit = minLimiter; // Minimum limit
+    Blynk.virtualWrite(V8, minLimiter);
+  }
+  else if (ultrasonicLimit > maxLimiter) {
+    ultrasonicLimit = maxLimiter; // Maximum limit
+    Blynk.virtualWrite(V8, maxLimiter);
+  }
 }
 
 // Led lights slider
