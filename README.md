@@ -37,6 +37,7 @@ This project details a **DIY Tank** controlled over a wireless network using an 
 | **WebSerial** | Ayush Sharma | 1.3.0 |
 | **ESP Async WebServer** | ESP32Async | 3.7.6 |
 | **Async TCP** | ESP32Async | 3.3.8 |
+| **SR04** | -   | -   |
 
 ### 🛠️ OTA Update Fix
 
@@ -121,6 +122,19 @@ This project is a work in progress. The following features and optimizations are
 * [x] **Ultrasonic Sensor Optimization:** Improve the HC-SR04 sensor logic to ensure the tank remains stopped after an obstacle is detected, even if the joystick remains in the forward position.
     * The tank should only resume movement when the sensor is turned off, acting as a manual reset after an obstacle stop.
     * [`0412ced`](https://github.com/SavageBeef/ESP32-Tank/commit/0412ced1019b2e85aa10e8bf287e56d3dd1e1c23)
+* [ ] **Reduce Speed Slider Resolution:** Decrease the effective resolution of the Blynk speed control from **10-bit** (0-1023) to **8-bit** (0-255). 
+    * This change will make the speed control less fine-grained, effectively spreading the useful motor range over the entire slider to eliminate the large dead zone (the 0-600 range where no movement occurs).
+
+### 📺 Multimedia & Telepresence 🆕
+
+* [ ] **Hardware Upgrade:** Replace the current **ESP32-WROOM-32** with an **ESP32-CAM** or a more powerful **ESP32 variant with PSRAM** (e.g., ESP32-WROVER-E) to handle high-speed image acquisition and streaming.
+* [ ] **Camera Module Integration (FPV):**
+    * Add a **Camera Module** (like the OV2640 or OV7725) for **First-Person View (FPV)**.
+    * Implement a lightweight video stream (e.g., MJPEG) accessible via a web interface or integrated into the Blynk/custom app.
+* [ ] **Audio Integration (Two-Way Communication):**
+    * Add a **Microphone** and **Speaker/Amplifier** for two-way audio communication (telepresence).
+    * Implement audio capture and streaming, potentially using the **I2S protocol** on the ESP32.
+
 ### 📱 Blynk App Integration
 
 * [x] **Battery Life:** Integrate the remaining battery life/voltage reading into the Blynk mobile application. 
@@ -129,6 +143,6 @@ This project is a work in progress. The following features and optimizations are
 * [x] **Distance Feedback:** Integrate the distance measurement from the HC-SR04 ultrasonic sensor into the Blynk mobile application. 
     * This will allow users to monitor the current distance to obstacles in real-time.
     * [`1a86019`](https://github.com/SavageBeef/ESP32-Tank/commit/1a86019a34868218a9e55ddc37525fbe77eed8e1)
-* [ ] **Custom Sensor Limit:** Add a **Numeric Input widget** in the Blynk app so the user can set a **custom distance limit** (threshold) for the ultrasonic sensor.
+* [x] **Custom Sensor Limit:** Add a **Numeric Input widget** in the Blynk app so the user can set a **custom distance limit** (threshold) for the ultrasonic sensor.
     * This will allow the user to dynamically adjust how close the tank gets to an obstacle before stopping.
-
+    * [`fa8743b`](https://github.com/SavageBeef/ESP32-Tank/commit/fa8743b2416cef666430fe2d0306312941814d07)
