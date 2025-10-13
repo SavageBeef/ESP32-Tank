@@ -76,9 +76,9 @@ char pass[] = Secret_PASS;
 #define motorR_EN 25
 
 // Analog speeds from 0 (lowest) - 1023 (highest).
-// 3 speeds used -- 0 (noSpeed), 350 (minSpeed), 850 (maxSpeed).
+// 3 speeds used -- 0 (noSpeed), 750 (minSpeed), 1023 (maxSpeed).
 // Use whatever speeds you want...too fast made it a pain in the ass to control.
-int minSpeed = 450;
+int minSpeed = 750;
 int maxSpeed = 1023;
 int noSpeed = 0;
 
@@ -343,7 +343,7 @@ BLYNK_WRITE(V6)
   int minLimiter = 0;
   int maxLimiter = 1023;
 
-  if (pinData < minLimiter){ // Min val limiter
+  if (pinData <= minLimiter){ // Min val limiter
     maxSpeed = minLimiter;
     Blynk.virtualWrite(V6, minLimiter);
   }
@@ -352,7 +352,9 @@ BLYNK_WRITE(V6)
     Blynk.virtualWrite(V6, maxLimiter);
   }
   else{
-    maxSpeed = pinData;
+    // Map 1-1023 to 750-1023 for speed control.
+    // This eliminates the the deadzone between 0-750.
+    maxSpeed = map(pinData, 1, 1023, 750, 1023); 
   }
   
   // minSpeed = maxSpeed-60; //for res 8 (0-255) is 23.53%
@@ -360,9 +362,11 @@ BLYNK_WRITE(V6)
    should work with every resolution 8,10,12,16 etc. ( value - 255,1023,2047,4095) where value is 2^resolution*/
 
   // Debug
-  /*Serial.print("maxSpeed = ");
-  Serial.println(maxSpeed);
-  Serial.println();*/
+  WebSerial.print("maxSpeed = ");
+  WebSerial.println(maxSpeed);
+  WebSerial.print("minSpeed = ");
+  WebSerial.println(minSpeed);
+  WebSerial.println();
 }
 
 // Ultrasonic Sensor button
@@ -472,14 +476,15 @@ void readBatteryVoltage() {
 
   float averageMilliVolts = sum / numSamples;
   float voltage = (averageMilliVolts / 1000.0);  // Convert mV to V
-  WebSerial.print("V = ");
-  WebSerial.println(voltage);
+  //WebSerial.print("V = ");
+  //WebSerial.println(voltage);
   voltage = voltage * (R1 + R2) / R2;  // Adjust for voltage divider
-  WebSerial.print("V-divider = ");
-  WebSerial.println(voltage);
+  //WebSerial.print("V-divider = ");
+  //WebSerial.println(voltage);
   voltage = voltage * calibrationFactor; // Correct differences between multimeter reading and voltage divider.
-  WebSerial.print("V-califactor = ");
-  WebSerial.println(voltage);
+  //WebSerial.print("V-califactor = ");
+  //WebSerial.println(voltage);
+  //WebSerial.println();
   // Write to Value Display
   Blynk.virtualWrite(V14, voltage);
 
