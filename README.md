@@ -122,8 +122,8 @@ This project is a work in progress. The following features and optimizations are
 * [x] **Ultrasonic Sensor Optimization:** Improve the HC-SR04 sensor logic to ensure the tank remains stopped after an obstacle is detected, even if the joystick remains in the forward position.
     * The tank should only resume movement when the sensor is turned off, acting as a manual reset after an obstacle stop.
     * [`0412ced`](https://github.com/SavageBeef/ESP32-Tank/commit/0412ced1019b2e85aa10e8bf287e56d3dd1e1c23)
-* [ ] **Reduce Speed Slider Resolution:** Decrease the effective resolution of the Blynk speed control from **10-bit** (0-1023) to **8-bit** (0-255). 
-    * This change will make the speed control less fine-grained, effectively spreading the useful motor range over the entire slider to eliminate the large dead zone (the 0-600 range where no movement occurs).
+* [x] **Optimize Speed Slider Sensitivity / Eliminate Dead Zone:** The previous 10-bit resolution caused a large motor dead zone (0-750). This was fixed by using the `map()` function to scale the input slider range to the motor's active PWM range.
+    * [`4c2c6b1`](https://github.com/SavageBeef/ESP32-Tank/commit/4c2c6b1081278c5ccd0cd4174da5427822565486)
 
 ### 📺 Multimedia & Telepresence 🆕
 
