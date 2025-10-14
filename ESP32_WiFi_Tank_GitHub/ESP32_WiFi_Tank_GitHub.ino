@@ -87,6 +87,8 @@ int noSpeed = 0;
 // Makes it a easier to control the tank.
 int minRange = 312;
 int maxRange = 712;
+int minneuRange = 412;
+int maxneuRange = 612;
 
 // Setting PWM properties for motors.
 int freq = 5000; // Was 30000 
@@ -259,7 +261,6 @@ void moveControl(int x, int y)
 {
   // Movement logic
   // Move forward
-
   if(x >= maxRange && y >= minRange && y <= maxRange)
   {
     digitalWrite(motorL_Positive,HIGH);
@@ -279,6 +280,16 @@ void moveControl(int x, int y)
     ledcWrite(motorL_EN, minSpeed);
     ledcWrite(motorR_EN, maxSpeed);
   }
+  // Move hard forward left
+  else if(x > maxneuRange && x < maxRange && y > maxRange)
+  {
+    digitalWrite(motorL_Positive,HIGH);
+    digitalWrite(motorL_Negative,LOW); 
+    digitalWrite(motorR_Positive,LOW);
+    digitalWrite(motorR_Negative,HIGH);
+    ledcWrite(motorL_EN, noSpeed);
+    ledcWrite(motorR_EN, maxSpeed);
+  }
   // Move forward right
   else if(x >= maxRange && y <= minRange)
   {
@@ -288,14 +299,24 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,HIGH);
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, minSpeed);
-  }  
+  } 
+  // Move hard forward right
+  else if(x > maxneuRange && x < maxRange && y < minRange)
+  {
+    digitalWrite(motorL_Positive,HIGH);
+    digitalWrite(motorL_Negative,LOW); 
+    digitalWrite(motorR_Positive,LOW);
+    digitalWrite(motorR_Negative,HIGH);
+    ledcWrite(motorL_EN, maxSpeed);
+    ledcWrite(motorR_EN, noSpeed);
+  } 
   // Neutral zone
   else if(y < maxRange && y > minRange && x < maxRange && x > minRange)
   {
     digitalWrite(motorL_Positive,LOW); 
     digitalWrite(motorL_Negative,LOW);
     digitalWrite(motorR_Positive,LOW);  
-    digitalWrite(motorR_Negative,LOW); 
+    digitalWrite(motorR_Negative,LOW);
   }
   // Move back
   else if(y >= minRange && y <= maxRange && x <= minRange)
@@ -317,7 +338,16 @@ void moveControl(int x, int y)
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, minSpeed);
   }
- 
+  // Move back and hard right
+  else if(x > minRange && x < minneuRange && y < minRange)
+  {
+    digitalWrite(motorL_Positive,LOW); 
+    digitalWrite(motorL_Negative,HIGH);
+    digitalWrite(motorR_Positive,HIGH); 
+    digitalWrite(motorR_Negative,LOW); 
+    ledcWrite(motorL_EN, maxSpeed);
+    ledcWrite(motorR_EN, noSpeed);
+  }
   // Move back and left
   else if(x <= minRange && y >= maxRange)
   {
@@ -327,7 +357,17 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,LOW); 
     ledcWrite(motorL_EN, minSpeed);
     ledcWrite(motorR_EN, maxSpeed);
-  }  
+  }
+  // Move back and hard left
+  else if(x > minRange && x < minneuRange && y > maxRange)
+  {
+    digitalWrite(motorL_Positive,LOW); 
+    digitalWrite(motorL_Negative,HIGH);
+    digitalWrite(motorR_Positive,HIGH); 
+    digitalWrite(motorR_Negative,LOW); 
+    ledcWrite(motorL_EN, noSpeed);
+    ledcWrite(motorR_EN, maxSpeed);
+  }
 }
 
 // Speed slider
@@ -357,9 +397,8 @@ BLYNK_WRITE(V6)
     maxSpeed = map(pinData, 1, 1023, 750, 1023); 
   }
   
-  // minSpeed = maxSpeed-60; //for res 8 (0-255) is 23.53%
-  minSpeed = (25/100)*maxSpeed; /*Converted to percentage so it 
-   should work with every resolution 8,10,12,16 etc. ( value - 255,1023,2047,4095) where value is 2^resolution*/
+  minSpeed = (75.0/100.0)*maxSpeed; /*Converted to percentage so it
+  can work with every resolution 8,10,12,16 etc. ( value - 255,1023,2047,4095) where value is 2^resolution*/
 
   // Debug
   WebSerial.print("maxSpeed = ");
