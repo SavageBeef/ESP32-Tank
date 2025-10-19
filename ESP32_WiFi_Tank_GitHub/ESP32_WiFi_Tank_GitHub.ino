@@ -418,9 +418,7 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
 {
   if (uSonicState == HIGH) // If button is on.
   {
-  
-    currentToUSonic == HIGH; // Turns on NPN Transistor to supply power to the sensor.
-   
+    digitalWrite(currentToUSonic, HIGH); // Turns on NPN Transistor to supply power to the sensor.
     distance = sr04.Distance();
     Blynk.virtualWrite(V7, distance); // Display distance in app.
 
@@ -453,7 +451,7 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
     }     
   }
   else {
-    currentToUSonic == LOW; // Cut power to NPPN Transistor.
+    digitalWrite(currentToUSonic, LOW); // Cut power to NPN Transistor.
     Blynk.virtualWrite(V7, "--"); 
     isHaltedByUSonic = false; // Always clear the flag when the sensor is turned OFF
   } 
