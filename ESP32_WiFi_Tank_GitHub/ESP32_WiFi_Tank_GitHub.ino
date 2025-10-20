@@ -139,6 +139,19 @@ void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
   ledcWrite(channel, duty);
 }
 
+// Print to both Serial Monitor and WebSerial Monitor.
+template <typename T>
+void dualPrint(T data) {
+  Serial.print(data);
+  WebSerial.print(data);
+}
+
+template <typename T>
+void dualPrintln(T data) {
+  Serial.println(data);
+  WebSerial.println(data);
+}
+
 void setup()
 {
   // Debug console
@@ -401,11 +414,11 @@ BLYNK_WRITE(V6)
   can work with every resolution 8,10,12,16 etc. ( value - 255,1023,2047,4095) where value is 2^resolution*/
 
   // Debug
-  WebSerial.print("maxSpeed = ");
-  WebSerial.println(maxSpeed);
-  WebSerial.print("minSpeed = ");
-  WebSerial.println(minSpeed);
-  WebSerial.println();
+  dualPrint("maxSpeed = ");
+  dualPrintln(maxSpeed); 
+  dualPrint("minSpeed = ");
+  dualPrintln(minSpeed);
+  dualPrintln("");
 }
 
 // Ultrasonic Sensor button
@@ -423,13 +436,9 @@ void uSonicButtonCheck() // Function to check ultrasonic button state. On/Off.
     Blynk.virtualWrite(V7, distance); // Display distance in app.
 
     // Debug
-    /*Serial.print("Distance = ");
-    Serial.print(distance);
-    Serial.println("cm");*/
-  
-    //WebSerial.print("Distance = ");
-    //WebSerial.print(distance);
-    //WebSerial.println("cm");
+    /*dualPrint("Distance = ");
+    dualPrint(distance);
+    dualPrintln("cm");*/
     
     if (distance <= ultrasonicLimit) // Prevent tank from crashing into objects.
     {
@@ -496,8 +505,8 @@ BLYNK_WRITE(V4)
  
   // Debug
   /*int ledValue = ledcRead(lights);
-  Serial.print("ledValue = ");
-  Serial.println(ledValue);*/
+  dualPrint("ledValue = ");
+  dualPrintln(ledValue);*/
   
 }
 
@@ -513,18 +522,18 @@ void readBatteryVoltage() {
 
   float averageMilliVolts = sum / numSamples;
   float voltage = (averageMilliVolts / 1000.0);  // Convert mV to V
-  //WebSerial.print("V = ");
-  //WebSerial.println(voltage);
+  //dualPrint("V = ");
+  //dualPrintln(voltage);
   voltage = voltage * (R1 + R2) / R2;  // Adjust for voltage divider
-  //WebSerial.print("V-divider = ");
-  //WebSerial.println(voltage);
+  //dualPrint("V-divider = ");
+  //dualPrintln(voltage);
   voltage = voltage * calibrationFactor; // Correct differences between multimeter reading and voltage divider.
-  //WebSerial.print("V-califactor = ");
-  //WebSerial.println(voltage);
-  //WebSerial.println();
+  //dualPrint("V-califactor = ");
+  //dualPrintln(voltage);
+  //dualPrintln();
+
   // Write to Value Display
   Blynk.virtualWrite(V14, voltage);
-
   //Battery Percentage
   float percentage = (voltage - minBatteryVoltage) / (maxBatteryVoltage - minBatteryVoltage) * 100;
   // Write to Gauge
@@ -588,6 +597,7 @@ void OTA_Setup(){
   Serial.println(WiFi.localIP());
 }
 
+// WebSerial message receive callback function.
 void recvMsg(uint8_t *data, size_t len){
   WebSerial.println("Received Data...");
   String d = "";
