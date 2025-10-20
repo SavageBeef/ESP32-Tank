@@ -124,9 +124,10 @@ This project is a work in progress. The following features and optimizations are
     * [`0412ced`](https://github.com/SavageBeef/ESP32-Tank/commit/0412ced1019b2e85aa10e8bf287e56d3dd1e1c23)
 * [x] **Optimize Speed Slider Sensitivity / Eliminate Dead Zone:** The previous 10-bit resolution caused a large motor dead zone (0-750). This was fixed by using the `map()` function to scale the input slider range to the motor's active PWM range.
     * [`4c2c6b1`](https://github.com/SavageBeef/ESP32-Tank/commit/4c2c6b1081278c5ccd0cd4174da5427822565486)
-* [ ] **Implement Dual-Mode Turning (Soft & Hard):** Refine the differential drive logic to support two distinct turning behaviors based on control input:
+* [x] **Implement Dual-Mode Turning (Soft & Hard):** Refine the differential drive logic to support two distinct turning behaviors based on control input:
     * **Soft Turns:** Gentle, wide-radius turns when the tank is moving forward at speed.
     * **Hard Turns (Pivot):** Sharp, in-place (pivot) turns when the tank's forward speed is near zero.
+    * [`a0f3a01`](https://github.com/SavageBeef/ESP32-Tank/commit/a0f3a01f58bbff9ed59f0d5cbbd16faba97a114c)
 
 ### 💻 Development Environment / Utility
 
