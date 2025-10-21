@@ -87,8 +87,13 @@ int noSpeed = 0;
 // Makes it a easier to control the tank.
 int minRange = 312;
 int maxRange = 712;
-int minneuRange = 412;
-int maxneuRange = 612;
+int minNeuRange = 412;
+int maxNeuRange = 612;
+
+// Directional Guard Declarations
+enum YRegion { Y_NEUTRAL, Y_FORWARD, Y_BACKWARD };
+// Tracks the last committed FWD/REV state (X-axis)
+YRegion lastYRegion = Y_NEUTRAL;
 
 // Setting PWM properties for motors.
 int freq = 5000; // Was 30000 
@@ -255,6 +260,43 @@ BLYNK_WRITE(V5)
     return; 
   }
 
+  // Determine the Current Desired X-Axis Region (Forward/Reverse)
+  YRegion currentXRegion; 
+  
+  // FWD Zones: Full FWD (x >= 712) OR Hard FWD (612 < x < 712)
+  if (x >= maxRange || (x > maxNeuRange && x < maxRange)) {
+    currentXRegion = Y_FORWARD; 
+  }
+  // REV Zones: Full REV (x <= 312) OR Hard REV (312 < x < 412)
+  else if (x <= minRange || (x > minRange && x < minNeuRange)) {
+    currentXRegion = Y_BACKWARD;
+  }
+  // ABSOLUTE CENTER DEAD ZONE: 412 < x < 612
+  else if (x > minNeuRange && x < maxNeuRange) {
+    // *** CRITICAL LOCK LOGIC ***
+    // While passing through the absolute center, maintain the last committed state.
+    // This forces the transition to be checked against Y_FORWARD or Y_BACKWARD, 
+    // even if the joystick briefly registers "neutral" input.
+    if (lastYRegion == Y_FORWARD || lastYRegion == Y_BACKWARD) {
+      currentXRegion = lastYRegion;
+    } else {
+      currentXRegion = Y_NEUTRAL;
+    }
+  }
+  // Default (should only occur if there is a true error)
+  else {
+    currentXRegion = Y_NEUTRAL;
+  }
+  
+  // CHECK FOR ILLEGAL TRANSITION
+  // If the last committed state was FWD and the current request is BWD, BLOCK IT.
+  if ((lastYRegion == Y_FORWARD && currentXRegion == Y_BACKWARD) ||
+    (lastYRegion == Y_BACKWARD && currentXRegion == Y_FORWARD)) 
+  {
+    // Block the move. The tank holds the previous state.
+    return; 
+  }
+
   // Call moveControl function.
   moveControl(x,y); 
   
@@ -282,9 +324,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,HIGH);
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, maxSpeed);
+    lastYRegion = Y_FORWARD; // <--- COMMIT FWD STATE
   }
   // Move forward left
-  else if(x >= maxRange && y >= maxRange)
+  else if(x >= maxRange && y >= maxNeuRange)
   {
     digitalWrite(motorL_Positive,HIGH);
     digitalWrite(motorL_Negative,LOW); 
@@ -292,9 +335,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,HIGH);
     ledcWrite(motorL_EN, minSpeed);
     ledcWrite(motorR_EN, maxSpeed);
+    lastYRegion = Y_FORWARD; // <--- COMMIT FWD STATE
   }
   // Move hard forward left
-  else if(x > maxneuRange && x < maxRange && y > maxRange)
+  else if(x > maxNeuRange && x < maxRange && y > maxRange)
   {
     digitalWrite(motorL_Positive,HIGH);
     digitalWrite(motorL_Negative,LOW); 
@@ -302,9 +346,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,HIGH);
     ledcWrite(motorL_EN, noSpeed);
     ledcWrite(motorR_EN, maxSpeed);
+    lastYRegion = Y_FORWARD; // <--- COMMIT FWD STATE
   }
   // Move forward right
-  else if(x >= maxRange && y <= minRange)
+  else if(x >= maxRange && y <= minNeuRange)
   {
     digitalWrite(motorL_Positive,HIGH);
     digitalWrite(motorL_Negative,LOW); 
@@ -312,9 +357,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,HIGH);
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, minSpeed);
+    lastYRegion = Y_FORWARD; // <--- COMMIT FWD STATE
   } 
   // Move hard forward right
-  else if(x > maxneuRange && x < maxRange && y < minRange)
+  else if(x > maxNeuRange && x < maxRange && y < minRange)
   {
     digitalWrite(motorL_Positive,HIGH);
     digitalWrite(motorL_Negative,LOW); 
@@ -322,6 +368,7 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,HIGH);
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, noSpeed);
+    lastYRegion = Y_FORWARD; // <--- COMMIT FWD STATE
   } 
   // Neutral zone
   else if(y < maxRange && y > minRange && x < maxRange && x > minRange)
@@ -330,6 +377,11 @@ void moveControl(int x, int y)
     digitalWrite(motorL_Negative,LOW);
     digitalWrite(motorR_Positive,LOW);  
     digitalWrite(motorR_Negative,LOW);
+    // Check for the ABSOLUTE DEAD CENTER (412-612) to reset the guard
+    if (y > minNeuRange && y < maxNeuRange && x > minNeuRange && x < maxNeuRange)
+    {
+      lastYRegion = Y_NEUTRAL; 
+    }
   }
   // Move back
   else if(y >= minRange && y <= maxRange && x <= minRange)
@@ -340,9 +392,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,LOW); 
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, maxSpeed);
+    lastYRegion = Y_BACKWARD; // <--- COMMIT BWD STATE
   }
   // Move back and right
- else if(y <= minRange && x <= minRange)
+ else if(y <= minNeuRange && x <= minRange)
   {
     digitalWrite(motorL_Positive,LOW); 
     digitalWrite(motorL_Negative,HIGH);
@@ -350,9 +403,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,LOW); 
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, minSpeed);
+    lastYRegion = Y_BACKWARD; // <--- COMMIT BWD STATE
   }
   // Move back and hard right
-  else if(x > minRange && x < minneuRange && y < minRange)
+  else if(x > minRange && x < minNeuRange && y < minRange)
   {
     digitalWrite(motorL_Positive,LOW); 
     digitalWrite(motorL_Negative,HIGH);
@@ -360,9 +414,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,LOW); 
     ledcWrite(motorL_EN, maxSpeed);
     ledcWrite(motorR_EN, noSpeed);
+    lastYRegion = Y_BACKWARD; // <--- COMMIT BWD STATE
   }
   // Move back and left
-  else if(x <= minRange && y >= maxRange)
+  else if(x <= minRange && y >= maxNeuRange)
   {
     digitalWrite(motorL_Positive,LOW); 
     digitalWrite(motorL_Negative,HIGH);
@@ -370,9 +425,10 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,LOW); 
     ledcWrite(motorL_EN, minSpeed);
     ledcWrite(motorR_EN, maxSpeed);
+    lastYRegion = Y_BACKWARD; // <--- COMMIT BWD STATE
   }
   // Move back and hard left
-  else if(x > minRange && x < minneuRange && y > maxRange)
+  else if(x > minRange && x < minNeuRange && y > maxRange)
   {
     digitalWrite(motorL_Positive,LOW); 
     digitalWrite(motorL_Negative,HIGH);
@@ -380,6 +436,7 @@ void moveControl(int x, int y)
     digitalWrite(motorR_Negative,LOW); 
     ledcWrite(motorL_EN, noSpeed);
     ledcWrite(motorR_EN, maxSpeed);
+    lastYRegion = Y_BACKWARD; // <--- COMMIT BWD STATE
   }
 }
 
