@@ -104,12 +104,12 @@ This configuration provides:
 | **M1 & M2** (Motors) | ComXim 25GA370 High Torque DC Brush Motor 25mm All Metal Gear (12V, 100R) |
 | **S1 & S2** (Switches) | Gikfun MTS102 2 Position 3 Pins Mini Toggle Switch for Arduino |
 | **U1 & U2** (Regulators) | STMicroelectronics L7805CV TO-220 Voltage Regulator |
-| **C1 & C2** (Capacitors) | 10 **µF** Electrolytic Capacitor |
+| **C1 & C2** (Capacitors) | 10 µF Electrolytic Capacitor |
 | **R1 & R2** (Resistors) | 220 Ohms Resistor |
 | **Q1** (Transistor) | PN 2222A NPN Transistor |
 | **Q2** (Transistor) | S8050 NPN Transistor |
 | **hc-sr1** (Sensor) | HC-SR04 Ultrasonic Sensor |
-| **Misc.** | 4 $\times$ 10k Ohms Resistors (For voltage divider - *Note: Not shown in the Schematic Diagram*) |
+| **R3 - R8** (Resistors) | For a voltage divider where R2 = **R3** (10k Ohms) and R1 = sum of **R4 - R8** (42k Ohms) |
 
 ---
 
@@ -128,6 +128,7 @@ This project is a work in progress. The following features and optimizations are
     * **Soft Turns:** Gentle, wide-radius turns when the tank is moving forward at speed.
     * **Hard Turns (Pivot):** Sharp, in-place (pivot) turns when the tank's forward speed is near zero.
     * [`a0f3a01`](https://github.com/SavageBeef/ESP32-Tank/commit/a0f3a01f58bbff9ed59f0d5cbbd16faba97a114c)
+    * [`9b06988`](https://github.com/SavageBeef/ESP32-Tank/commit/9b069881c559e9dc7d497c702f9e7d618b88abb4) - Directional Transition Guard Feature.
 
 ### 💻 Development Environment / Utility
 
