@@ -165,10 +165,8 @@ void setup()
   // Call OTA_Setup function which provides Arduino OTA.
   OTA_Setup();
 
-  // WebSerial is accessible at "<IP Address>/webserial" in browser.
-  WebSerial.begin(&server);
-  WebSerial.msgCallback(recvMsg);
-  server.begin();
+  // Call WebSerial Setup function.
+  WebSerial_Setup();
 
   // IP and Port of Blynk Server.
   Blynk.config(auth, IPAddress(Secret_IP), 8080);
@@ -654,18 +652,24 @@ void OTA_Setup(){
   Serial.println(WiFi.localIP());
 }
 
-// WebSerial message receive callback function.
-void recvMsg(uint8_t *data, size_t len){
+// WebSerial Setup function.
+void WebSerial_Setup(){
+// WebSerial is accessible at "<IP Address>/webserial" in browser
+WebSerial.begin(&server);
+
+/* Attach Message Callback */
+WebSerial.onMessage([&](uint8_t *data, size_t len) {
+  Serial.printf("Received %u bytes from WebSerial: ", len);
+  Serial.write(data, len);
+  Serial.println();
   WebSerial.println("Received Data...");
   String d = "";
-  for(int i=0; i < len; i++){
+  for(size_t i=0; i < len; i++){
     d += char(data[i]);
   }
   WebSerial.println(d);
-  if (d == "ON"){
-    digitalWrite(LED, HIGH);
-  }
-  if (d=="OFF"){
-    digitalWrite(LED, LOW);
-  }
+});
+
+// Start server
+server.begin();
 }
