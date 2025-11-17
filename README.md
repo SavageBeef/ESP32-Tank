@@ -34,7 +34,7 @@ This project details a **DIY Tank** controlled over a wireless network using an 
 | :--- | :--- | :--- |
 | **Blynk** | Volodymyr Shymanskyy | 1.1.0 |
 | **ArduinoOTA** | Arduino, Juraj Andrassy | 1.1.0 |
-| **WebSerial** | Ayush Sharma | 1.3.0 |
+| **WebSerial** | Ayush Sharma | 2.1.1 |
 | **ESP Async WebServer** | ESP32Async | 3.9.0 |
 | **Async TCP** | ESP32Async | 3.4.9 |
 | **SR04** | Elegoo   | -   |
