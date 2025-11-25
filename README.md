@@ -41,17 +41,46 @@ This project details a **DIY Tank** controlled over a wireless network using an 
 
 ### 🛠️ OTA Update Fix
 
-If you encounter issues with Arduino OTA updates in Arduino IDE 2, refer to this fix:
-[https://forum.arduino.cc/t/network-ports-missing/1355667/4](https://forum.arduino.cc/t/network-ports-missing/1355667/4)
+If you encounter issues with Arduino OTA updates in Arduino IDE 2, refer to this [fix](https://forum.arduino.cc/t/network-ports-missing/1355667/4).
 
 ---
 
 ## 📱 Blynk Setup
 
 ### Local Server
+This project utilizes a local Blynk server. You can find the source code and details here:
+[blynk-server](https://github.com/Peterkn2001/blynk-server).
 
-The project utilizes a local Blynk server:
-[https://github.com/Peterkn2001/blynk-server](https://github.com/Peterkn2001/blynk-server)
+You can set up the server using one of the two methods below:
+
+#### Option 1: Script
+You can use the helper scripts to start the server.
+
+1.  Download the configuration scripts here: **[blynk-configs](https//github.com/SavageBeef/blynk-configs)**.
+2.  Ensure the script is placed in the **same directory** as the `server-0.41.17.jar` file.
+3.  Run the script to start the server.
+
+#### Option 2: Docker (Containerized)
+This method uses the [`hokori/blynk-server:0.41.17`](https://hub.docker.com/r/hokori/blynk-server) image, which supports both **x64** and **ARM** architectures.
+
+**1. Prerequisites**:
+Ensure you have **Docker** and **Docker Compose** installed on your machine.
+
+**2. Configuration**
+* Download/Create your `docker-compose.yml` file: **[blynk-configs](https//github.com/SavageBeef/blynk-configs)**.
+* Edit the file as needed to match your environment variables.
+
+**3. Management Commands**:
+Open your terminal in the directory containing your `docker-compose.yml` file and use the following commands:
+
+* **Start the container:**
+    ```bash
+    docker-compose up -d
+    ```
+* **Stop and remove the container:**
+    ```bash
+    docker-compose down
+    ```
 
 ### Mobile App
 
