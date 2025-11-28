@@ -56,7 +56,7 @@ You can set up the server using one of the two methods below:
 #### Option 1: Script
 You can use the helper scripts to start the server.
 
-1.  Download the configuration scripts here: **[blynk-configs](https//github.com/SavageBeef/blynk-configs)**.
+1.  Download the configuration scripts here: **[blynk-configs](https://github.com/SavageBeef/blynk-configs)**.
 2.  Ensure the script is placed in the **same directory** as the `server-0.41.17.jar` file.
 3.  Run the script to start the server.
 
@@ -67,7 +67,7 @@ This method uses the [`hokori/blynk-server:0.41.17`](https://hub.docker.com/r/ho
 Ensure you have **Docker** and **Docker Compose** installed on your machine.
 
 **2. Configuration**
-* Download/Create your `docker-compose.yml` file: **[blynk-configs](https//github.com/SavageBeef/blynk-configs)**.
+* Download/Create your `docker-compose.yml` file: **[blynk-configs](https://github.com/SavageBeef/blynk-configs)**.
 * Edit the file as needed to match your environment variables.
 
 **3. Management Commands**:
