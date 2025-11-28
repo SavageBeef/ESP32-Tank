@@ -53,6 +53,9 @@
 // Secrets
 #include "ESP32_secrets.h"
 
+// Add printf functionality to WebSerial
+#include "WebSerial_printf.h"
+
 AsyncWebServer server(80);
 int LED = 2;
 
@@ -473,7 +476,7 @@ BLYNK_WRITE(V6)
   dualPrintln(maxSpeed); 
   dualPrint("minSpeed = ");
   dualPrintln(minSpeed);
-  dualPrintln("");
+  WebSerial.printf("maxSpeed = %d, minSpeed = %d\n", maxSpeed, minSpeed);
 }
 
 // Ultrasonic Sensor button
