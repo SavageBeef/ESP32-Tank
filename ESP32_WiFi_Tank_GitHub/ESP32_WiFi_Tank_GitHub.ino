@@ -56,6 +56,9 @@
 // Add printf functionality to WebSerial
 #include "WebSerial_printf.h"
 
+// Dual Printf to Serial Monitor and WebSerial Monitor
+#include "dual_printf.h"
+
 AsyncWebServer server(80);
 int LED = 2;
 
@@ -476,7 +479,7 @@ BLYNK_WRITE(V6)
   dualPrintln(maxSpeed); 
   dualPrint("minSpeed = ");
   dualPrintln(minSpeed);
-  WebSerial.printf("maxSpeed = %d, minSpeed = %d\n", maxSpeed, minSpeed);
+  dualPrintf("maxSpeed = %d, minSpeed = %d\n", maxSpeed, minSpeed);
 }
 
 // Ultrasonic Sensor button
