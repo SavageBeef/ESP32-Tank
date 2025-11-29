@@ -161,7 +161,10 @@ This project is a work in progress. The following features and optimizations are
 
 ### 💻 Development Environment / Utility
 
-* [ ] **Custom Serial Wrapper:** Create a custom function (e.g., `dualPrint()`, `dualPrintln()`) that simultaneously outputs messages to both the standard **Serial Monitor** and the **WebSerial** interface.
+* [x] **Custom Serial Wrapper:** Create a custom function (e.g., `dualPrint()`, `dualPrintln()`) that simultaneously outputs messages to both the standard **Serial Monitor** and the **WebSerial** interface.
+    * [`7b2f663`](https://github.com/SavageBeef/ESP32-Tank/commit/7b2f663f4e958d80c948881af8dee6b58300c08f) - Custom Serial Wrapper created for Print and Println method.
+    * [`731f6c9`](https://github.com/SavageBeef/ESP32-Tank/commit/731f6c9ff5fa201b73b6f177cf589acf51a3baca) - Implement printf feature for WebSerial.
+    * [`1e4c11e`](https://github.com/SavageBeef/ESP32-Tank/commit/1e4c11e764a6946d85a6ee605c938358414fb7d8) - dualPrintf() function.
 
 ### 🌐 Network Management (Captive Portal)
 
