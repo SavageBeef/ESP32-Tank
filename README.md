@@ -38,6 +38,7 @@ This project details a **DIY Tank** controlled over a wireless network using an 
 | **ESP Async WebServer** | ESP32Async | 3.9.0 |
 | **Async TCP** | ESP32Async | 3.4.9 |
 | **SR04** | Elegoo   | -   |
+| **WiFiManager** | tzapu | 2.0.0 |
 
 ### 🛠️ OTA Update Fix
 
@@ -168,9 +169,10 @@ This project is a work in progress. The following features and optimizations are
 
 ### 🌐 Network Management (Captive Portal)
 
-* [ ] **Wi-Fi Provisioning Webpage:** Implement a captive portal or a simple webpage that launches when the tank fails to connect to the configured network credentials.
+* [x] **Wi-Fi Provisioning Webpage:** Implement a captive portal or a simple webpage that launches when the tank fails to connect to the configured network credentials.
     * This page should allow the user to enter new Wi-Fi credentials (SSID, Password), Blynk Port, and the Blynk Auth Token.
     * The new credentials must be saved to the ESP32's **EEPROM/Flash (Preferences)** to persist across reboots.
+    * [`141e742`](https://github.com/SavageBeef/ESP32-Tank/commit/141e7425c4e670193565e8a104879f825c3bfaf1) - SSID:`Tank-Setup` PASS:`password123` IP:`192.168.4.1`
 
 ### 📺 Multimedia & Telepresence 🆕
 
