@@ -2,6 +2,8 @@
 
 ## 🚀 Overview
 
+![Tank](Tank.jpg)
+
 This project details a **DIY Tank** controlled over a wireless network using an **ESP32** microcontroller. The system is programmed using **Arduino IDE** and utilizes the **Blynk Library** for mobile control.
 
 ---
