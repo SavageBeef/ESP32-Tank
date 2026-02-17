@@ -68,6 +68,8 @@
 
 #include <Preferences.h> // Native ESP32 library for saving data to flash memory.
 
+#include <LittleFS.h> // Stores to web files for the Blynk Provisioner.
+
 Preferences preferences;
 WiFiManager wm;
 
@@ -83,6 +85,10 @@ bool has_provisioned_blynk = false;
 
 AsyncWebServer server(80);
 int LED = 2;
+
+// Blynk Provisioner softAP settings
+const char* softAPName = "Tank-Blynk-Setup";
+const char* softAPPass = "password123";
 
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
@@ -185,6 +191,20 @@ void dualPrintln(T data) {
   WebSerial.println(data);
 }
 
+// This function swaps placeholders in the HTML with real data
+String processor(const String& var) {
+  if (var == "CURRENT_SERVER") {
+    return String(blynk_server) + ":" + String(blynk_port);
+  }
+  if (var == "CURRENT_AUTH") {
+    return String(blynk_auth);
+  }
+  if (var == "AP_NAME") {
+    return String(softAPName); 
+  }
+  return String();
+}
+
 void setup()
 {
   // Debug console
@@ -194,6 +214,8 @@ void setup()
   delay(2000);
   Serial.println("\n\n=== TANK BOOTING ===");
   Serial.println("Initializing systems...");
+
+  LittleFS.begin();
 
   // --- 1. Load Custom Params (Blynk) from Flash ---
   Serial.println("Loading preferences...");
@@ -470,53 +492,33 @@ void launchCombinedProvisioner() {
 // Blynk-only provisioner for subsequent Blynk connection failures
 void launchBlynkProvisioner() {
   Serial.println("\n=== Blynk Server Configuration Portal ===\n");
-  
+
+  if(!LittleFS.begin()) {
+      Serial.println("LittleFS Mount Failed!");
+      return;
+    }
+
   // Temporarily stop the main AsyncWebServer to free port 80
   Serial.println("Stopping WebSerial server to free port 80...");
   server.end();
   delay(500);
-  
+
   // Create soft AP for Blynk configuration
-  WiFi.softAP("Tank-Blynk-Setup", "password123");
+  WiFi.softAP(softAPName, softAPPass);
   IPAddress softAPIP = WiFi.softAPIP();
   Serial.printf("Soft AP IP: %s\n", softAPIP.toString().c_str());
   
   // Create a simple AsyncWebServer for Blynk config only (no WiFi fields)
   AsyncWebServer blynkServer(80);
   
-  // Serve the Blynk configuration form with current values pre-filled
-  blynkServer.on("/", HTTP_GET, [&](AsyncWebServerRequest *request) {
-    // Build current server:port value
-    String currentServer = String(blynk_server) + ":" + String(blynk_port);
-    String currentAuth = String(blynk_auth);
-    
-    String html = R"(
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <title>Tank Blynk Setup</title>
-          <style>
-            body { font-family: Arial; text-align: center; padding: 20px; }
-            input { padding: 10px; margin: 10px; width: 200px; }
-            button { padding: 10px 20px; font-size: 16px; }
-          </style>
-        </head>
-        <body>
-          <h1>Tank Blynk Configuration</h1>
-          <form action="/save" method="POST">
-          <label>Blynk Server (IP:PORT):</label><br>
-          <input type="text" name="server" value=")" + currentServer + R"(" required><br>
-          <label>Blynk Auth Token:</label><br>
-          <input type="text" name="auth" value=")" + currentAuth + R"(" required><br>
-          <button type="submit">Save & Restart</button>
-          </form>
-        </body>
-      </html>
-    )";
-    request->send(200, "text/html", html);
+  // Serve the Blynk configuration Bootstrap HTML form with current values pre-filled
+  blynkServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/blynk.html", String(), false, processor);
   });
   
+  // Serve Bootstrap CSS (Static files from /data)
+  blynkServer.serveStatic("/", LittleFS, "/");
+
   // Handle form submission
   blynkServer.on("/save", HTTP_POST, [&](AsyncWebServerRequest *request) {
     if (request->hasParam("server", true) && request->hasParam("auth", true)) {
