@@ -503,6 +503,10 @@ void launchBlynkProvisioner() {
   server.end();
   delay(500);
 
+  // Restart timer variables
+  bool shouldRestart = false;
+  unsigned long restartTimer = 0;
+
   // Create soft AP for Blynk configuration
   WiFi.softAP(softAPName, softAPPass);
   IPAddress softAPIP = WiFi.softAPIP();
@@ -547,11 +551,15 @@ void launchBlynkProvisioner() {
         preferences.putString("auth", authParam);
         preferences.end();
         
-        request->send(200, "text/html", "<h1>Configuration Saved!</h1><p>Restarting...</p>");
-        delay(2000);
-        ESP.restart();
+        //Success page redirect
+        request->send(LittleFS, "/success.html", "text/html");
+        // Restart logic
+        shouldRestart = true;
+        restartTimer = millis();
       } else {
-        request->send(400, "text/html", "<h1>Invalid format!</h1><p>Use IP:PORT</p>");
+        // Error redirect
+        Serial.println("Invalid format received. Redirecting back...");
+        request->redirect("/?error=1");
       }
     }
   });
@@ -564,6 +572,10 @@ void launchBlynkProvisioner() {
   unsigned long startTime = millis();
   while (millis() - startTime < 300000) {  // 5 minutes
     delay(100);
+    // Check if we need to restart
+    if (shouldRestart && (millis() - restartTimer > 2000)) {
+      ESP.restart();
+    }
   }
   
   blynkServer.end();
