@@ -42,6 +42,14 @@ This project details a **DIY Tank** controlled over a wireless network using an 
 | **SR04** | Elegoo   | -   |
 | **WiFiManager** | tzapu | 2.0.0 |
 
+### Plugins | Extensions
+
+| Plugin Name | Author | Version |
+| :--- | :--- | :--- |
+| [**arduino-littlefs-upload**](https://github.com/earlephilhower/arduino-littlefs-upload) | earlephilhower | 1.6.3 |
+
+Note: LittleFS is used to upload the files from the `data` folder to the ESP32 onboard storage. 
+
 ### 🛠️ OTA Update Fix
 
 If you encounter issues with Arduino OTA updates in Arduino IDE 2, refer to this [fix](https://forum.arduino.cc/t/network-ports-missing/1355667/4).
